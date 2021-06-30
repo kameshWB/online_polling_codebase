@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71566495477",
+    "project_id": "online-polling-1b9dd",
+    "storage_bucket": "online-polling-1b9dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71566495477:android:7baf185e5e9b687db8bfbc",
+        "android_client_info": {
+          "package_name": "com.sves.mini.team1.onlinre_polling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71566495477-t0qn9hmsi0k40u3sime6rv2nnnm16716.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0G82c_ySlYZMEIdr0XCoOku1DXdNd338"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71566495477-t0qn9hmsi0k40u3sime6rv2nnnm16716.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
