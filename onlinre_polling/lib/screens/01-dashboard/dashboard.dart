@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:onlinre_polling/core/Models/event.dart';
 import 'package:onlinre_polling/core/constants/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onlinre_polling/core/schemas/user-schemas.dart';
+import 'package:onlinre_polling/core/services/firebase_services.dart';
 import 'package:onlinre_polling/core/widgets/countcard.dart';
 import 'package:onlinre_polling/core/widgets/loading-animation.dart';
 import 'package:onlinre_polling/core/widgets/success-animation.dart';
@@ -30,6 +32,16 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _showLoading = false;
   bool _showSuccess = false;
 
+  /// Add new Event
+  bool _showPage1 = true;
+  bool _showEventConformDialoge = false;
+  bool _showPage2 = false;
+  Event event = Event();
+  final TextEditingController eventTitleController = TextEditingController();
+  final TextEditingController eventDescriptionController =
+      TextEditingController();
+  final TextEditingController eventQuestionController = TextEditingController();
+
   bool _activeEvents = false;
   bool _needResponse = true;
   bool _closedEvents = false;
@@ -43,15 +55,13 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _takeNewEvent = true;
 
   String selctedEvent = 'One';
-  String selectedEventType = 'One';
+  String selectedEventType = 'Radio / Options';
+  String selectedPriyority = 'High';
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController conformPasswordController =
       TextEditingController();
-
-  final TextEditingController eventTitle = TextEditingController();
-  final TextEditingController eventDescription = TextEditingController();
 
   @override
   void initState() {
@@ -502,7 +512,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       color: Colors.black,
                     ),
                   ),
-                  controller: eventTitle,
+                  controller: eventTitleController,
                   maxLength: 100,
                   decoration: InputDecoration(
                     hintText: 'Name',
@@ -538,7 +548,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       color: Colors.black,
                     ),
                   ),
-                  controller: eventDescription,
+                  controller: eventDescriptionController,
                   minLines: 1,
                   maxLines: 20,
                   maxLength: 1000,
@@ -595,7 +605,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         selectedEventType = newValue;
                       });
                     },
-                    items: <String>['One', 'Two', 'Free', 'Four']
+                    items: <String>['Radio / Options', 'Slider', 'Text Area']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -611,7 +621,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   width: 200,
                   margin: EdgeInsets.only(top: 70),
                   child: DropdownButton<String>(
-                    value: selectedEventType,
+                    value: selectedPriyority,
                     icon: const Icon(Icons.arrow_drop_down),
                     iconSize: 20,
                     elevation: 16,
@@ -625,10 +635,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     onChanged: (String newValue) {
                       setState(() {
-                        selectedEventType = newValue;
+                        selectedPriyority = newValue;
                       });
                     },
-                    items: <String>['One', 'Two', 'Free', 'Four']
+                    items: <String>['High', 'Medium', 'Low']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -645,18 +655,107 @@ class _DashboardPageState extends State<DashboardPage> {
     }
 
     buildPage2() {
-      return Text('Page - 2');
+      return Column(
+        children: [
+          Container(
+            width: 700,
+            padding: EdgeInsets.only(top: 50),
+            child: TextField(
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              controller: eventQuestionController,
+              maxLength: 300,
+              decoration: InputDecoration(
+                hintText: 'Question',
+                hintStyle: GoogleFonts.poppins(
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+                disabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black87),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
     }
 
-    bool _showPage1 = true;
-    bool _showPage2 = false;
+    showDialoge() {
+      setState(() {
+        _showEventConformDialoge = true;
+      });
+    }
 
-    return Container(
-        color: Colors.white70,
+    onContinue() {
+      if (_showPage1) {
+        setState(() {
+          _showPage1 = false;
+          _showPage2 = true;
+        });
+      } else {
+        showDialoge();
+      }
+    }
+
+    submitEvent() async {
+      event.title = eventTitleController.text;
+      event.des = eventDescriptionController.text;
+      event.type = selectedEventType;
+      event.priority = (selectedPriyority == 'Low')
+          ? 1
+          : (selectedPriyority == 'Medium')
+              ? 2
+              : 3;
+      event.question = eventQuestionController.text;
+      setState(() {
+        _showSuccess = true;
+      });
+      await FirebaseService.addEvent(event);
+
+      eventTitleController.text = '';
+      eventDescriptionController.text = '';
+      eventQuestionController.text = '';
+
+      setState(() {
+        _showEventConformDialoge = false;
+        _showPage2 = false;
+        _showPage1 = true;
+        _takeNewEvent = false;
+        _showSuccess = false;
+      });
+    }
+
+    buildEventConformDialoge() {
+      return Container(
+        width: 1000,
+        height: 600,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+          color: Colors.white70,
+        ),
         child: Center(
           child: Container(
-            width: 1000,
-            height: 600,
+            height: 200,
+            width: 450,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
@@ -670,47 +769,120 @@ class _DashboardPageState extends State<DashboardPage> {
                     offset: Offset(3, 4),
                     blurRadius: 30)
               ],
-              color: AppColor.background.white,
+              color: Colors.white,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(60.0),
+            child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  if (_showPage1) buildPage1(),
-                  if (_showPage2) buildPage2(),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomButton(
-                            textColor: Colors.black,
-                            bgColor: AppColor.white,
-                            text: 'Cancel',
-                            onTap: () {
-                              setState(() {
-                                _takeNewEvent = false;
-                              });
-                            }),
-                        CustomButton(
-                            text: 'Continue',
-                            onTap: () {
-                              print('tapped');
-                              if (_showPage1)
-                                setState(() {
-                                  _showPage1 = false;
-                                  _showPage2 = true;
-                                });
-                            }),
-                      ],
+                  Text(
+                    'Are you sure ?',
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
-                  )
+                  ),
+                  Text(
+                    'Your new event will be published.',
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      CustomButton(
+                        text: 'Cancel',
+                        bgColor: AppColor.white,
+                        textColor: Colors.black,
+                        onTap: () {
+                          setState(() {
+                            _showEventConformDialoge = false;
+                          });
+                        },
+                      ),
+                      CustomButton(
+                        text: 'Submit',
+                        onTap: () {
+                          submitEvent();
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
-        ));
+        ),
+      );
+    }
+
+    return Container(
+      color: Colors.white70,
+      child: Center(
+        child: Stack(
+          children: [
+            Container(
+              width: 1000,
+              height: 600,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.28999999165534973),
+                      offset: Offset(3, 4),
+                      blurRadius: 30)
+                ],
+                color: AppColor.background.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(60.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (_showPage1) buildPage1(),
+                    if (_showPage2) buildPage2(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButton(
+                              textColor: Colors.black,
+                              bgColor: AppColor.white,
+                              text: 'Cancel',
+                              onTap: () {
+                                setState(() {
+                                  _takeNewEvent = false;
+                                });
+                              }),
+                          CustomButton(
+                              text: 'Continue',
+                              onTap: () {
+                                onContinue();
+                              }),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            if (_showEventConformDialoge) buildEventConformDialoge(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget buildCreateNotificationsContent() {

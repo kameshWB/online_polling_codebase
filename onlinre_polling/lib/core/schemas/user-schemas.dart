@@ -28,6 +28,10 @@ class DataSchemas {
   static var eventCount =
       FirebaseFirestore.instance.collection("counter").doc('event');
 
+  /// event counter
+  static var events =
+      FirebaseFirestore.instance.collection("events");
+
   /// poll counter
   static var pollCount =
       FirebaseFirestore.instance.collection("counter").doc('poll');
