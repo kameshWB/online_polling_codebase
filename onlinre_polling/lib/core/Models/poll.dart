@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Event {
+class Poll {
   int id;
   String title;
   String des;
@@ -11,7 +11,7 @@ class Event {
   String type;
   String question;
 
-  Event({
+  Poll({
     this.id = 0,
     this.title = '',
     this.des = '',
@@ -23,7 +23,7 @@ class Event {
     this.question = '',
   });
 
-  factory Event.fromFirestore(DocumentSnapshot snapshot) {
+  factory Poll.fromFirestore(DocumentSnapshot snapshot) {
     int getIntValue(DocumentSnapshot snapshot, String key) {
       try {
         var v = snapshot.get(key);
@@ -54,7 +54,7 @@ class Event {
       }
     }
 
-    return Event(
+    return Poll(
       id: getIntValue(snapshot, "id"),
       title: getStringValue(snapshot, "title"),
       des: getStringValue(snapshot, "des"),

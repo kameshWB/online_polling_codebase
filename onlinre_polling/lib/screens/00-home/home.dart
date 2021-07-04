@@ -238,22 +238,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            ///request a poll
-            Center(
-              child: Text(
-                'Request a Poll',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  textStyle: TextStyle(
-                    color: Color.fromRGBO(0, 0, 0, 1),
-                    fontSize: 12,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.normal,
-                    height: 1,
-                  ),
-                ),
-              ),
-            ),
             SizedBox(
               height: 50,
             )
@@ -300,7 +284,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
 
-        ///Passwo
+        ///Password
         Container(
           width: 300,
           padding: EdgeInsets.only(top: 50),
@@ -531,6 +515,7 @@ class _HomePageState extends State<HomePage> {
       status = await FirebaseAuthentication.signInWithEmailPassword(
           emailController.text, passwordController.text);
       isAdmin = false;
+      print('under this');
     }
     if (status == true) Navigator.pushNamed(context, DashboardPage.id);
     setState(() {
@@ -544,6 +529,7 @@ class _HomePageState extends State<HomePage> {
     });
     var status = await FirebaseAuthentication.registerWithEmailPassword(
         emailController.text, passwordController.text);
+    if (status) isAdmin = false;
     if (status == true) Navigator.pushNamed(context, DashboardPage.id);
     setState(() {
       _showLoading = false;
