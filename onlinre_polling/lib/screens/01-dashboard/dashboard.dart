@@ -2156,6 +2156,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               _showEventConformDialoge = false;
                               _takeUserResponseEvent = false;
                             });
+                            eventAnswerController.text = '';
                             print('User answer submit');
                           }),
                     ],
@@ -2521,6 +2522,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               _showPollConformDialoge = false;
                               _takeUserResponsePoll = false;
                             });
+                            eventAnswerController.text = '';
                             print('User poll submit');
                           }),
                     ],
@@ -3053,7 +3055,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 bottom: 40,
               ),
               child: Text(
-                'Need an Immedete Response',
+                'Need an Immediate Response',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.mulish(
                   color: Color.fromRGBO(37, 39, 51, 1),
@@ -3274,7 +3276,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 bottom: 40,
               ),
               child: Text(
-                'Need an Immedete Response',
+                'Need an Immediate Response',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.mulish(
                   color: Color.fromRGBO(37, 39, 51, 1),
