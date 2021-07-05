@@ -33,6 +33,14 @@ class FirebaseService {
       await DataSchemas.pollCount.set({
         'count': currentCount,
       });
+
+      print('==============');
+      var list = poll.question.split(',');
+      Map<String, dynamic> map = {};
+      for (int i = 0; i < list.length; i++) {
+        map[list[i]] = 0;
+      }
+      await DataSchemas.pollResults.doc(poll.title).set(map);
     } catch (e) {
       print(e);
     }

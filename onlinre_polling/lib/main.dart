@@ -19,8 +19,8 @@ class OnlinePolling extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
       ),
-      // initialRoute: HomePage.id,
-      initialRoute: DashboardPage.id,
+      initialRoute: HomePage.id,
+      // initialRoute: DashboardPage.id,
       routes: {
         HomePage.id: (context) => HomePage(),
         DashboardPage.id: (context) => DashboardPage(),

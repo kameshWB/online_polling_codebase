@@ -527,10 +527,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _showLoading = true;
     });
-    var status = await FirebaseAuthentication.registerWithEmailPassword(
-        emailController.text, passwordController.text);
+    var status = false;
+    if (passwordController.text == conformPasswordController.text)
+      status = await FirebaseAuthentication.registerWithEmailPassword(
+          emailController.text, passwordController.text);
     if (status) isAdmin = false;
-    if (status == true) Navigator.pushNamed(context, DashboardPage.id);
+    if (status) Navigator.pushNamed(context, DashboardPage.id);
     setState(() {
       _showLoading = false;
     });
